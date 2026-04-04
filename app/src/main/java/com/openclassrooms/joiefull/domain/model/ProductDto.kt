@@ -1,20 +1,12 @@
 package com.openclassrooms.joiefull.domain.model
 
 data class ProductDto(
-    val id: Int,
-    val picture: String,
+    val id: Long,
     val name: String,
-    val category: String,
-    val likes: Int = 0,
-    val priceInCents: Int = 0,
-    val originalPriceInCents: Int = 0,
+    val category: Category,
+    val likes: Long,
+    val pictureUrl: String,
+    val pictureDescription: String,
+    val priceInCents: Long,
+    val originalPriceInCents: Long,
 )
-//data class ProductDto(
-//    val id: Int,
-//    val picture: Picture,
-//    val name: String,
-//    val category: Category,
-//    val likes: Int = 0,
-//    val priceInCents: Int = 0,
-//    val originalPriceInCents: Int = 0,
-//)

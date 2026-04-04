@@ -9,8 +9,14 @@ class ProductRepositoryImpl(
     private val apiService: ClothesApiService,
 ) : ProductRepository {
 
+    override suspend fun fetchProductById(id: Long): ProductDto? {
+        return apiService.getClothes()
+            .find { it.id == id }
+            ?.toDomain()
+    }
+
     override suspend fun fetchProducts(): List<ProductDto> {
-        return apiService.getClothes().map { entity -> entity.toDomain() }
+        return apiService.getClothes().map { clothe -> clothe.toDomain() }
     }
 
 }
