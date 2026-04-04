@@ -69,6 +69,7 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.compose)
     testImplementation(libs.koin.test)
     testImplementation(libs.koin.test.junit5)
 
@@ -79,7 +80,7 @@ dependencies {
     ksp(libs.moshi.codegen)
 
     // Coil
-    implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.coil.network)
 
     // Testing
