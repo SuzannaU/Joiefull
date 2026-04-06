@@ -4,6 +4,7 @@ import com.openclassrooms.joiefull.data.dao.ClothesApiService
 import com.openclassrooms.joiefull.data.entity.toDomain
 import com.openclassrooms.joiefull.domain.model.ProductDto
 import com.openclassrooms.joiefull.domain.repository.ProductRepository
+import kotlinx.coroutines.delay
 
 class ProductRepositoryImpl(
     private val apiService: ClothesApiService,
@@ -16,6 +17,7 @@ class ProductRepositoryImpl(
     }
 
     override suspend fun fetchProducts(): List<ProductDto> {
+        delay(2000L)
         return apiService.getClothes().map { clothe -> clothe.toDomain() }
     }
 

@@ -4,5 +4,7 @@
     <string name="category_accessories">Accessoires</string>
     <string name="category_bottoms">Bas</string>
     <string name="category_shoes">Chaussures</string>
+    <string name="navigate_to_top">Naviguer vers le haut</string>
+    <string name="navigate_to_start">Naviguer vers le début</string>
 
 </resources>
