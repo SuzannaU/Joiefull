@@ -1,6 +1,7 @@
 package com.openclassrooms.joiefull.ui.model
 
 import com.openclassrooms.joiefull.domain.model.ProductDto
+import java.text.NumberFormat
 import java.util.Locale
 
 
@@ -12,12 +13,14 @@ fun ProductDto.toDisplay() : ProductDisplay {
         likes = this.likes,
         pictureUrl = this.pictureUrl,
         pictureDescription = this.pictureDescription,
-        price = formatPriceToString(this.priceInCents.times(100L)),
-        originalPrice = formatPriceToString(this.originalPriceInCents.times(100L))
+        price = formatPriceToString(this.priceInCents.div(100L)),
+        originalPrice = formatPriceToString(this.originalPriceInCents.div(100L))
     )
 }
 
 fun formatPriceToString(price: Long): String {
     val locale = Locale.getDefault()
-    return String.format(locale, "%d", price)
+    val format = NumberFormat.getCurrencyInstance(locale)
+    return format.format(price)
+    //return String.format(locale, "%.2f€", price)
 }

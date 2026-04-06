@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Joiefull</string>
+    <string name="category_tops">Hauts</string>
+    <string name="category_accessories">Accessoires</string>
+    <string name="category_bottoms">Bas</string>
+    <string name="category_shoes">Chaussures</string>
+
 </resources>
