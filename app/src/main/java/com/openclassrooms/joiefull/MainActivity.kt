@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.openclassrooms.joiefull.domain.model.Category
-import com.openclassrooms.joiefull.ui.model.ProductDisplay
+import androidx.navigation.navArgument
 import com.openclassrooms.joiefull.ui.screen.CatalogScreen
 import com.openclassrooms.joiefull.ui.screen.ProductScreen
 import com.openclassrooms.joiefull.ui.theme.JoiefullTheme
@@ -48,29 +48,27 @@ fun MainScreen(
     ) {
         composable("catalog") {
             CatalogScreen(
-                onProductClicked = {
-                    navController.navigate("product")
+                onProductClicked = { productId ->
+                    navController.navigate("product/$productId")
                 },
                 modifier = Modifier
                     .fillMaxSize(),
             )
         }
-        composable("product") {
+        composable(
+            route = "product/{productId}",
+            arguments = listOf(navArgument("productId") {
+                type = NavType.LongType
+            })
+        ) { backStackEntry ->
+
+            val productId = backStackEntry.arguments?.getLong("productId") ?: 0
+
             ProductScreen(
                 modifier = Modifier
                     .fillMaxSize(),
-                product = ProductDisplay(
-                    id = 1,
-                    name = "Pull torsadé",
-                    category = Category.TOPS,
-                    likes = 102,
-                    pictureUrl = "https://raw.githubusercontent.com/OpenClassrooms-Student-Center/D-velopper-une-interface-accessible-en-Jetpack-Compose/main/img/tops/2.jpg",
-                    pictureDescription = "description de l'image",
-                    price = "49,99 €",
-                    originalPrice = "59,99 €"
-                ),
+                productId = productId,
                 userPicture = "https://randomuser.me/api/portraits/men/1.jpg",
-                userRating = 4,
                 onBackClicked = {
                     navController.navigate("catalog")
                 },

@@ -1,6 +1,7 @@
 package com.openclassrooms.joiefull.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,7 @@ fun PictureBoxCatalog(
     pictureUrl: String,
     pictureDescription: String,
     likes: String,
+    isLiked: Boolean,
     modifier: Modifier = Modifier,
 ) {
 
@@ -51,6 +54,7 @@ fun PictureBoxCatalog(
         )
         Likes(
             likes = likes,
+            isLiked = isLiked,
             modifier = Modifier
                 .padding(12.dp)
                 .size(height = 27.dp, width = 50.dp)
@@ -66,8 +70,10 @@ fun PictureBoxProduct(
     pictureUrl: String,
     pictureDescription: String,
     likes: String,
+    isLiked: Boolean,
     onBackClicked: () -> Unit,
     onShareClicked: () -> Unit,
+    onLikeClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -93,10 +99,10 @@ fun PictureBoxProduct(
                 .align(Alignment.TopStart)
         ) {
             Icon(
-                painter = painterResource(R.drawable.arrow_upward),
-                contentDescription = "Naviguer vers le catalogue",
+                painter = painterResource(R.drawable.arrow_back),
+                contentDescription = stringResource(R.string.back_to_catalog),
                 tint = Color.Black,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(24.dp)
             )
         }
 
@@ -108,20 +114,22 @@ fun PictureBoxProduct(
         ) {
             Icon(
                 painter = painterResource(R.drawable.share),
-                contentDescription = "Naviguer vers le catalogue",
+                contentDescription = stringResource(R.string.share),
                 tint = Color.Black,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(24.dp)
             )
         }
 
         Likes(
             likes = likes,
+            isLiked = isLiked,
             modifier = Modifier
                 .padding(12.dp)
                 .size(height = 27.dp, width = 50.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(color = Color.White)
                 .align(Alignment.BottomEnd)
+                .clickable(onClick = onLikeClicked)
         )
     }
 }
@@ -129,6 +137,7 @@ fun PictureBoxProduct(
 @Composable
 fun Likes(
     likes: String,
+    isLiked: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -138,8 +147,8 @@ fun Likes(
     ) {
 
         Icon(
-            painterResource(R.drawable.outline_favorite_24),
-            contentDescription = null,
+            painterResource(if (isLiked) R.drawable.favorite_filled else R.drawable.outline_favorite_24),
+            contentDescription = stringResource(R.string.likes_count),
             modifier = Modifier.size(15.dp)
         )
 
@@ -158,7 +167,8 @@ fun PictureBoxPreview() {
         PictureBoxCatalog(
             pictureUrl = "",
             pictureDescription = "description",
-            likes = "53"
+            likes = "53",
+            isLiked = false,
         )
     }
 }
@@ -172,7 +182,9 @@ fun PictureBoxProductPreview() {
             pictureDescription = "description",
             likes = "53",
             onBackClicked = {},
-            onShareClicked = {}
+            onLikeClicked = {},
+            onShareClicked = {},
+            isLiked = true,
         )
     }
 }

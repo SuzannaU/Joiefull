@@ -25,7 +25,9 @@ class ProductViewModel(
             withContext(dispatcherProvider.io) {
                 try {
                     _productUiState.value = ProductUiState.ProductFound(
-                        loadProductByIdUseCase.execute(id).toDisplay()
+                        loadProductByIdUseCase.execute(id).toDisplay(),
+                        0,
+                        "",
                     )
                 } catch (e: NoSuchElementException) {
                     _productUiState.value = ProductUiState.NoProduct
@@ -34,13 +36,39 @@ class ProductViewModel(
         }
     }
 
+    // Only the in-memory product will be updated, not the remote one from the API
+    fun toggleLikeState() {
+        val currentState = _productUiState.value
+        if (currentState !is ProductUiState.ProductFound) return
+
+        val newLikeState = !currentState.product.isLiked
+        val updatedProduct = currentState.product.copy(isLiked = newLikeState)
+
+        _productUiState.value = currentState.copy(product = updatedProduct)
+    }
+
+    fun onCommentChanged(newComment: String) {
+        val currentState = _productUiState.value
+        if (currentState !is ProductUiState.ProductFound) return
+
+        _productUiState.value = currentState.copy(review = newComment)
+    }
+
+    fun onRatingChanged(newRating: Int) {
+        val currentState = _productUiState.value
+        if (currentState !is ProductUiState.ProductFound) return
+
+        _productUiState.value = currentState.copy(rating = newRating)
+    }
 
     sealed class ProductUiState {
         object LoadingState : ProductUiState()
         object NoProduct : ProductUiState()
 
         data class ProductFound(
-            val product: ProductDisplay
+            val product: ProductDisplay,
+            val rating: Int,
+            val review: String,
         ) : ProductUiState()
     }
 }

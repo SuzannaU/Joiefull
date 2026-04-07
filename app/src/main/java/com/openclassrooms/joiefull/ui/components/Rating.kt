@@ -4,18 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.openclassrooms.joiefull.R
@@ -24,6 +25,7 @@ import com.openclassrooms.joiefull.R
 fun UserRating(
     userPicture: String,
     userRating: Int,
+    onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -34,11 +36,13 @@ fun UserRating(
         AsyncImage(
             model = userPicture,
             contentDescription = null,
-            modifier = Modifier.size(40.dp).clip(CircleShape)
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
         )
         StarRating(
             rating = userRating,
-            onRatingChanged = {},
+            onRatingChanged = onRatingChanged,
         )
     }
 }
@@ -46,7 +50,7 @@ fun UserRating(
 @Composable
 fun StarRating(
     rating: Int,
-    onRatingChanged: (Float) -> Unit,
+    onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier) {
@@ -54,7 +58,7 @@ fun StarRating(
             val isFilled = rating > index
 
             IconButton(
-                onClick = { onRatingChanged(index + 1f) }
+                onClick = { onRatingChanged(index + 1) }
             ) {
                 Icon(
                     painter = painterResource(if (isFilled) R.drawable.star_filled else R.drawable.star_outlined),
@@ -69,24 +73,28 @@ fun StarRating(
 
 @Composable
 fun Review(
-    onReviewChange: (String) -> Unit,
+    reviewText: String,
+    onReviewChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var reviewText = remember { mutableStateOf("") }
 
     OutlinedTextField(
-        value = reviewText.value,
+        value = reviewText,
         placeholder = {
-            Text("Commentaire")
+            Text(
+                text = stringResource(R.string.review_placeholder),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         },
         label = {
             Text(
-                text = "Partagez ici vos impressions sur cette pièce",
+                text = stringResource(R.string.review_label),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
             )
         },
-        onValueChange = { onReviewChange(it) },
+        onValueChange = { onReviewChanged(it) },
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         modifier = modifier
     )
 }

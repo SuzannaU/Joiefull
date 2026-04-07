@@ -11,4 +11,5 @@ data class ProductDisplay(
     val pictureDescription: String,
     val price: String,
     val originalPrice: String,
+    var isLiked: Boolean = false,
 )

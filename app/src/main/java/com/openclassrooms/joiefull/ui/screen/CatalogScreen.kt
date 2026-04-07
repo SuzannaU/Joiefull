@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassrooms.joiefull.R
 import com.openclassrooms.joiefull.domain.model.Category
+import com.openclassrooms.joiefull.ui.components.LoadingBar
 import com.openclassrooms.joiefull.ui.components.PictureBoxCatalog
 import com.openclassrooms.joiefull.ui.components.ProductDetails
 import com.openclassrooms.joiefull.ui.model.ProductDisplay
@@ -49,7 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 fun CatalogScreen(
     modifier: Modifier = Modifier,
     viewModel: CatalogViewModel = koinViewModel(),
-    onProductClicked: () -> Unit,
+    onProductClicked: (Long) -> Unit,
 ) {
 
     val uiState = viewModel.catalogUiState.collectAsStateWithLifecycle()
@@ -61,15 +61,11 @@ fun CatalogScreen(
 
         when (uiState.value) {
             CatalogViewModel.CatalogUiState.LoadingState -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.padding(innerPadding).fillMaxSize(),
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.width(48.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
+                LoadingBar(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                )
             }
 
             is CatalogViewModel.CatalogUiState.ProductsFound -> {
@@ -87,7 +83,7 @@ fun CatalogScreen(
 @Composable
 fun CatalogContent(
     products: List<ProductDisplay>,
-    onProductClicked: () -> Unit,
+    onProductClicked: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val categoryListState = rememberLazyListState()
@@ -147,7 +143,7 @@ fun CategoryRow(
     category: Category,
     products: List<ProductDisplay>,
     listState: LazyListState,
-    onProductClicked: () -> Unit,
+    onProductClicked: (Long) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val isJumpToFirstVisible = remember {
@@ -172,12 +168,17 @@ fun CategoryRow(
                 items(products) { product ->
                     Column(
                         horizontalAlignment = Alignment.Start,
-                        modifier = Modifier.width(200.dp).clickable(onClick = onProductClicked)
+                        modifier = Modifier
+                            .width(200.dp)
+                            .clickable {
+                                onProductClicked(product.id)
+                            }
                     ) {
                         PictureBoxCatalog(
                             pictureUrl = product.pictureUrl,
                             pictureDescription = product.pictureDescription,
                             likes = product.likes.toString(),
+                            isLiked = product.isLiked,
                         )
                         ProductDetails(
                             productName = product.name,
