@@ -52,18 +52,20 @@ fun ProductScreen(
                     modifier = Modifier.padding(innerPadding).fillMaxSize(),
                 )
             }
-            ProductViewModel.ProductUiState.NoProduct -> TODO()
+            ProductViewModel.ProductUiState.NoProduct -> {
+                Text(text = "No product")
+            }
             is ProductViewModel.ProductUiState.ProductFound -> {
                 ProductContent(
                     product = (uiState.value as ProductViewModel.ProductUiState.ProductFound).product,
                     userPicture = userPicture,
-                    userRating = (uiState.value as ProductViewModel.ProductUiState.ProductFound).rating,
-                    reviewText = (uiState.value as ProductViewModel.ProductUiState.ProductFound).review,
+                    userRating = (uiState.value as ProductViewModel.ProductUiState.ProductFound).product.rating,
+                    reviewText = (uiState.value as ProductViewModel.ProductUiState.ProductFound).product.review,
                     onBackClicked = onBackClicked,
                     onShareClicked = {},
                     onLikeClicked = { viewModel.toggleLikeState() },
                     onRatingChanged = { viewModel.onRatingChanged(it) },
-                    onReviewChanged = { viewModel.onCommentChanged(it)},
+                    onReviewChanged = { viewModel.onReviewChanged(it)},
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .verticalScroll(state = scrollState),
@@ -142,7 +144,6 @@ fun ProductScreenPreview() {
 //                originalPrice = "59,99 €"
 //            ),
             userPicture = "https://randomuser.me/api/portraits/men/1.jpg",
-            userRating = 4,
             onBackClicked = {},
             onShareClicked = {},
         )

@@ -5,6 +5,9 @@ import com.openclassrooms.joiefull.data.repository.ProductRepositoryImpl
 import com.openclassrooms.joiefull.domain.repository.ProductRepository
 import com.openclassrooms.joiefull.domain.usecase.LoadProductByIdUseCase
 import com.openclassrooms.joiefull.domain.usecase.LoadProductsUseCase
+import com.openclassrooms.joiefull.domain.usecase.UpdateIsLikedUseCase
+import com.openclassrooms.joiefull.domain.usecase.UpdateRatingUseCase
+import com.openclassrooms.joiefull.domain.usecase.UpdateReviewUseCase
 import com.openclassrooms.joiefull.ui.DefaultDispatcherProvider
 import com.openclassrooms.joiefull.ui.DispatcherProvider
 import com.openclassrooms.joiefull.ui.viewmodel.CatalogViewModel
@@ -41,7 +44,10 @@ val appModule = module {
 
     factory { LoadProductsUseCase(get()) }
     factory { LoadProductByIdUseCase(get()) }
+    factory { UpdateIsLikedUseCase(get()) }
+    factory { UpdateRatingUseCase(get()) }
+    factory { UpdateReviewUseCase(get()) }
 
     viewModel { CatalogViewModel(get(), get()) }
-    viewModel { ProductViewModel(get(), get()) }
+    viewModel { ProductViewModel(get(), get(), get(), get(), get()) }
 }

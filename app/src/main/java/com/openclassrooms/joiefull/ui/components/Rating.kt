@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -78,8 +79,10 @@ fun Review(
     modifier: Modifier = Modifier,
 ) {
 
+    var reviewState = rememberTextFieldState(reviewText)
+
     OutlinedTextField(
-        value = reviewText,
+        state = reviewState,
         placeholder = {
             Text(
                 text = stringResource(R.string.review_placeholder),
@@ -93,8 +96,12 @@ fun Review(
                 color = MaterialTheme.colorScheme.secondary,
             )
         },
-        onValueChange = { onReviewChanged(it) },
+        //onValueChange = { onReviewChanged(it) },
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        onKeyboardAction = { performDefaultAction ->
+            onReviewChanged(reviewState.text.toString())
+            performDefaultAction()
+        },
         modifier = modifier
     )
 }

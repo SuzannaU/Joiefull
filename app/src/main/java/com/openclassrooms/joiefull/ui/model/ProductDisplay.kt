@@ -7,9 +7,11 @@ data class ProductDisplay(
     val name: String,
     val category: Category,
     val likes: Long,
+    var rating: Int,
+    var review: String,
+    var isLiked: Boolean,
     val pictureUrl: String,
     val pictureDescription: String,
     val price: String,
     val originalPrice: String,
-    var isLiked: Boolean = false,
 )
