@@ -11,13 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.openclassrooms.joiefull.ui.screen.CatalogScreen
-import com.openclassrooms.joiefull.ui.screen.ProductScreen
+import com.openclassrooms.joiefull.ui.navigation.Navigation
 import com.openclassrooms.joiefull.ui.theme.JoiefullTheme
 
 class MainActivity : ComponentActivity() {
@@ -48,8 +42,10 @@ class MainActivity : ComponentActivity() {
             action = Intent.ACTION_SEND
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, textToShare)
-            putExtra(Intent.EXTRA_TITLE,
-                getString(R.string.share_this_item, name))
+            putExtra(
+                Intent.EXTRA_TITLE,
+                getString(R.string.share_this_item, name)
+            )
         }
 
         startActivity(Intent.createChooser(shareIntent, null))
@@ -70,42 +66,9 @@ fun MainScreen(
     showReviewToast: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val navController = rememberNavController()
-    NavHost(
+    Navigation(
         modifier = modifier,
-        navController = navController,
-        startDestination = "catalog"
-    ) {
-        composable("catalog") {
-            CatalogScreen(
-                onProductClicked = { productId ->
-                    navController.navigate("product/$productId")
-                },
-                modifier = Modifier
-                    .fillMaxSize(),
-            )
-        }
-        composable(
-            route = "product/{productId}",
-            arguments = listOf(navArgument("productId") {
-                type = NavType.LongType
-            })
-        ) { backStackEntry ->
-
-            val productId = backStackEntry.arguments?.getLong("productId") ?: 0
-
-            ProductScreen(
-                modifier = Modifier
-                    .fillMaxSize(),
-                productId = productId,
-                userPicture = "https://randomuser.me/api/portraits/men/1.jpg",
-                onBackClicked = {
-                    navController.navigate("catalog")
-                },
-                shareProduct = shareProduct,
-                showReviewToast = showReviewToast,
-            )
-        }
-
-    }
+        shareProduct = shareProduct,
+        showReviewToast = showReviewToast,
+    )
 }

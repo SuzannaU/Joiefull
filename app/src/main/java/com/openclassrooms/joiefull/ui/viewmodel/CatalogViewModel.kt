@@ -2,6 +2,7 @@ package com.openclassrooms.joiefull.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.openclassrooms.joiefull.domain.model.Category
 import com.openclassrooms.joiefull.domain.usecase.LoadProductsUseCase
 import com.openclassrooms.joiefull.ui.DispatcherProvider
 import com.openclassrooms.joiefull.ui.model.ProductDisplay
@@ -19,13 +20,20 @@ class CatalogViewModel(
     private val _catalogUiState = MutableStateFlow<CatalogUiState>(CatalogUiState.LoadingState)
     val catalogUiState = _catalogUiState.asStateFlow()
 
+    init {
+        loadAllProducts()
+    }
+
     fun loadAllProducts() {
+
         viewModelScope.launch {
             _catalogUiState.value = CatalogUiState.LoadingState
             withContext(dispatcherProvider.io) {
+                val products = loadProductsUseCase.execute().map { it.toDisplay() }
                 _catalogUiState.value = CatalogUiState.ProductsFound(
-                        loadProductsUseCase.execute().map { it.toDisplay() }
-                    )
+                    allProducts = products,
+                    groupedProducts = products.groupBy { it.category },
+                )
             }
         }
     }
@@ -34,7 +42,8 @@ class CatalogViewModel(
         object LoadingState : CatalogUiState()
 
         data class ProductsFound(
-            val products: List<ProductDisplay>,
+            val allProducts: List<ProductDisplay>,
+            val groupedProducts: Map<Category, List<ProductDisplay>>,
         ) : CatalogUiState()
 
     }

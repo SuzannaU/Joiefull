@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +54,6 @@ fun CatalogScreen(
 ) {
 
     val uiState = viewModel.catalogUiState.collectAsStateWithLifecycle()
-    viewModel.loadAllProducts()
 
     Scaffold(
         modifier = modifier,
@@ -70,8 +70,8 @@ fun CatalogScreen(
 
             is CatalogViewModel.CatalogUiState.ProductsFound -> {
                 CatalogContent(
-                    products =
-                        (uiState.value as CatalogViewModel.CatalogUiState.ProductsFound).products,
+                    groupedProducts =
+                        (uiState.value as CatalogViewModel.CatalogUiState.ProductsFound).groupedProducts,
                     onProductClicked = onProductClicked,
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -82,7 +82,7 @@ fun CatalogScreen(
 
 @Composable
 fun CatalogContent(
-    products: List<ProductDisplay>,
+    groupedProducts: Map<Category, List<ProductDisplay>>,
     onProductClicked: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -90,8 +90,13 @@ fun CatalogContent(
     val scope = rememberCoroutineScope()
     val categories = Category.entries
 
-    val rowStates = remember(categories) {
-        categories.associate { it.name to LazyListState() }
+    val rowStates = categories.associate { category ->
+        category.name to rememberSaveable(
+            category.name,
+            saver = LazyListState.Saver
+        ) {
+            LazyListState()
+        }
     }
 
     val isJumpToTopVisible = remember {
@@ -110,8 +115,7 @@ fun CatalogContent(
         ) {
             categories.forEach { category ->
 
-                val catProducts =
-                    products.filter { it.category == category }   // move filtering of products in ViewModel
+                val catProducts = groupedProducts[category] ?: emptyList()
 
                 item(key = category.name) {
                     CategoryRow(

@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,6 +29,7 @@ import com.openclassrooms.joiefull.ui.components.UserRating
 import com.openclassrooms.joiefull.ui.model.ProductDisplay
 import com.openclassrooms.joiefull.ui.viewmodel.ProductViewModel
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ProductScreen(
@@ -37,14 +39,15 @@ fun ProductScreen(
     shareProduct: (String, String) -> Unit,
     showReviewToast: (String) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ProductViewModel = koinViewModel(),
 ) {
 
-    val scrollState = rememberScrollState()
+    val viewModel = koinViewModel<ProductViewModel> {
+        parametersOf(productId)
+    }
     val uiState = viewModel.productUiState.collectAsStateWithLifecycle()
-    viewModel.loadProductById(productId)
 
-    val showShareDialog = remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
+    val showShareDialog = rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -156,26 +159,3 @@ fun ProductContent(
         )
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun ProductScreenPreview() {
-//    JoiefullTheme {
-//        ProductScreen(
-//            productId = 1,
-//            product = ProductDisplay(
-//                id = 1,
-//                name = "Pull torsadé",
-//                category = Category.TOPS,
-//                likes = 102,
-//                pictureUrl = "https://raw.githubusercontent.com/OpenClassrooms-Student-Center/D-velopper-une-interface-accessible-en-Jetpack-Compose/main/img/tops/2.jpg",
-//                pictureDescription = "description de l'image",
-//                price = "49,99 €",
-//                originalPrice = "59,99 €"
-//            ),
-//            userPicture = "https://randomuser.me/api/portraits/men/1.jpg",
-//            onBackClicked = {},
-//            onShareClicked = {},
-//        )
-//    }
-//}

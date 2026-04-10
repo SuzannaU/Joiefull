@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProductViewModel(
+    private val productId: Long,
     private val dispatcherProvider: DispatcherProvider,
     private val loadProductByIdUseCase: LoadProductByIdUseCase,
     private val updateIsLikedUseCase: UpdateIsLikedUseCase,
@@ -25,7 +26,12 @@ class ProductViewModel(
     private val _productUiState = MutableStateFlow<ProductUiState>(ProductUiState.LoadingState)
     val productUiState = _productUiState.asStateFlow()
 
+    init {
+        loadProductById(productId)
+    }
+
     fun loadProductById(id: Long) {
+
         viewModelScope.launch {
             _productUiState.value = ProductUiState.LoadingState
             withContext(dispatcherProvider.io) {
