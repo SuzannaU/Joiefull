@@ -1,11 +1,9 @@
 package com.openclassrooms.joiefull.data.repository
 
-import android.util.Log
 import com.openclassrooms.joiefull.data.dao.ClothesApiService
 import com.openclassrooms.joiefull.data.entity.toDomain
 import com.openclassrooms.joiefull.domain.model.ProductDto
 import com.openclassrooms.joiefull.domain.repository.ProductRepository
-import kotlinx.coroutines.delay
 
 class ProductRepositoryImpl(
     private val apiService: ClothesApiService,
@@ -25,7 +23,6 @@ class ProductRepositoryImpl(
 
     override suspend fun fetchProducts(): List<ProductDto> {
         if (products.isEmpty()) {
-            delay(1500L)
             products = apiService.getClothes().map { clothe -> clothe.toDomain() }
         }
         return products
@@ -37,7 +34,6 @@ class ProductRepositoryImpl(
     ): ProductDto? {
         if (products.isEmpty()) return null
 
-        delay(1000L)
         products.filter { productDto -> productDto.id == id }
             .forEach { productDto -> productDto.rating = rating }
 
@@ -48,7 +44,6 @@ class ProductRepositoryImpl(
         id: Long,
         review: String
     ): ProductDto? {
-        Log.d("TAG", "updateReview is called")
         if (products.isEmpty()) return null
 
         products.filter { productDto -> productDto.id == id }
@@ -64,7 +59,10 @@ class ProductRepositoryImpl(
         if (products.isEmpty()) return null
 
         products.filter { productDto -> productDto.id == id }
-            .forEach { productDto -> productDto.isLiked = isLiked }
+            .forEach { productDto ->
+                productDto.isLiked = isLiked
+                productDto.likes = if (isLiked) productDto.likes+1 else productDto.likes-1
+            }
 
         return products.first { it.id == id }
     }

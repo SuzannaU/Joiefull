@@ -12,5 +12,10 @@
     <string name="likes_count">Nombre de likes</string>
     <string name="review_label">Partagez ici vos impressions sur cette pièce</string>
     <string name="review_placeholder">Commentaire</string>
+    <string name="share_this_item">Partagez cet article: %1$s</string>
+    <string name="dismiss">Annuler</string>
+    <string name="confirm">Confirmer</string>
+    <string name="enter_comment">Saisissez un commentaire :</string>
+    <string name="review_saved">Commentaire enregistré</string>
 
 </resources>

@@ -75,11 +75,12 @@ fun StarRating(
 @Composable
 fun Review(
     reviewText: String,
-    onReviewChanged: (String) -> Unit,
+    onReviewChanged: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
     var reviewState = rememberTextFieldState(reviewText)
+    val reviewConfirmation = stringResource(R.string.review_saved)
 
     OutlinedTextField(
         state = reviewState,
@@ -96,10 +97,9 @@ fun Review(
                 color = MaterialTheme.colorScheme.secondary,
             )
         },
-        //onValueChange = { onReviewChanged(it) },
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         onKeyboardAction = { performDefaultAction ->
-            onReviewChanged(reviewState.text.toString())
+            onReviewChanged(reviewState.text.toString(), reviewConfirmation)
             performDefaultAction()
         },
         modifier = modifier

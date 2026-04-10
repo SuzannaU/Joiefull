@@ -1,6 +1,5 @@
 package com.openclassrooms.joiefull.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.joiefull.domain.usecase.LoadProductByIdUseCase

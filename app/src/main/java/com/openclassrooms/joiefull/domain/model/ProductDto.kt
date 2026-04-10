@@ -4,7 +4,7 @@ data class ProductDto(
     val id: Long,
     val name: String,
     val category: Category,
-    val likes: Long,
+    var likes: Long,
     var rating: Int =0,
     var review: String = "",
     var isLiked: Boolean = false,

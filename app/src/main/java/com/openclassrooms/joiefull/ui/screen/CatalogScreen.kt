@@ -173,6 +173,7 @@ fun CategoryRow(
                             .clickable {
                                 onProductClicked(product.id)
                             }
+
                     ) {
                         PictureBoxCatalog(
                             pictureUrl = product.pictureUrl,

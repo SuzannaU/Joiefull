@@ -1,6 +1,8 @@
 package com.openclassrooms.joiefull
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,6 +28,12 @@ class MainActivity : ComponentActivity() {
             JoiefullTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(
+                        shareProduct = { name, textToShare ->
+                            share(name, textToShare)
+                        },
+                        showReviewToast = { reviewConfirmation ->
+                            showToast(reviewConfirmation, Toast.LENGTH_SHORT)
+                        },
                         modifier = Modifier
                             .padding(innerPadding)
                             .fillMaxSize(),
@@ -34,10 +42,32 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun share(name: String, textToShare: String) {
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, textToShare)
+            putExtra(Intent.EXTRA_TITLE,
+                getString(R.string.share_this_item, name))
+        }
+
+        startActivity(Intent.createChooser(shareIntent, null))
+    }
+
+    private fun showToast(text: String, duration: Int) {
+        Toast.makeText(
+            this,
+            text,
+            duration
+        ).show()
+    }
 }
 
 @Composable
 fun MainScreen(
+    shareProduct: (String, String) -> Unit,
+    showReviewToast: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val navController = rememberNavController()
@@ -72,7 +102,8 @@ fun MainScreen(
                 onBackClicked = {
                     navController.navigate("catalog")
                 },
-                onShareClicked = {},
+                shareProduct = shareProduct,
+                showReviewToast = showReviewToast,
             )
         }
 
