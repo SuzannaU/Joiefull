@@ -10,10 +10,10 @@ enum class Category {
 
     val labelId: Int
         get() = when(this) {
-            Category.TOPS -> R.string.category_tops
-            Category.ACCESSORIES -> R.string.category_accessories
-            Category.BOTTOMS -> R.string.category_bottoms
-            Category.SHOES -> R.string.category_shoes
+            TOPS -> R.string.category_tops
+            ACCESSORIES -> R.string.category_accessories
+            BOTTOMS -> R.string.category_bottoms
+            SHOES -> R.string.category_shoes
         }
 
 }

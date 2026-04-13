@@ -56,6 +56,7 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
 
     // UI
     implementation(platform(libs.androidx.compose.bom))

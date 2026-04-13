@@ -1,5 +1,6 @@
 package com.openclassrooms.joiefull.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.joiefull.domain.usecase.LoadProductByIdUseCase
@@ -15,7 +16,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProductViewModel(
-    private val productId: Long,
     private val dispatcherProvider: DispatcherProvider,
     private val loadProductByIdUseCase: LoadProductByIdUseCase,
     private val updateIsLikedUseCase: UpdateIsLikedUseCase,
@@ -25,10 +25,6 @@ class ProductViewModel(
 
     private val _productUiState = MutableStateFlow<ProductUiState>(ProductUiState.LoadingState)
     val productUiState = _productUiState.asStateFlow()
-
-    init {
-        loadProductById(productId)
-    }
 
     fun loadProductById(id: Long) {
 

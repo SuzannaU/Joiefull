@@ -17,5 +17,7 @@
     <string name="confirm">Confirmer</string>
     <string name="enter_comment">Saisissez un commentaire :</string>
     <string name="review_saved">Commentaire enregistré</string>
+    <string name="select_product">Sélectionnez un produit</string>
+    <string name="no_product">Aucun produit trouvé</string>
 
 </resources>

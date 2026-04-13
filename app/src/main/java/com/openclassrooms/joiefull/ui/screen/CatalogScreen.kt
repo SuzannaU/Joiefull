@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -48,22 +47,16 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CatalogScreen(
-    modifier: Modifier = Modifier,
     viewModel: CatalogViewModel = koinViewModel(),
     onProductClicked: (Long) -> Unit,
 ) {
 
     val uiState = viewModel.catalogUiState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        modifier = modifier,
-    ) { innerPadding ->
-
         when (uiState.value) {
             CatalogViewModel.CatalogUiState.LoadingState -> {
                 LoadingBar(
                     modifier = Modifier
-                        .padding(innerPadding)
                         .fillMaxSize(),
                 )
             }
@@ -73,18 +66,15 @@ fun CatalogScreen(
                     groupedProducts =
                         (uiState.value as CatalogViewModel.CatalogUiState.ProductsFound).groupedProducts,
                     onProductClicked = onProductClicked,
-                    modifier = Modifier.padding(innerPadding)
                 )
             }
         }
-    }
 }
 
 @Composable
 fun CatalogContent(
     groupedProducts: Map<Category, List<ProductDisplay>>,
     onProductClicked: (Long) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val categoryListState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -105,7 +95,7 @@ fun CatalogContent(
 
     Box(
         contentAlignment = Alignment.BottomCenter,
-        modifier = modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     ) {
         LazyColumn(
             state = categoryListState,
@@ -162,12 +152,13 @@ fun CategoryRow(
 
         Box(
             contentAlignment = Alignment.CenterEnd,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             LazyRow(
                 state = listState,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState),
-                modifier = Modifier.height(300.dp)
+                modifier = Modifier.height(300.dp).fillMaxWidth()
             ) {
                 items(products) { product ->
                     Column(
