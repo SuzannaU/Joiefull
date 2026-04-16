@@ -24,20 +24,6 @@ class CatalogViewModel(
         loadAllProducts()
     }
 
-//    fun loadAllProducts() {
-//
-//        viewModelScope.launch {
-//            _catalogUiState.value = CatalogUiState.LoadingState
-//            withContext(dispatcherProvider.io) {
-//                val products = loadProductsUseCase.execute().map { it.toDisplay() }
-//                _catalogUiState.value = CatalogUiState.ProductsFound(
-//                    allProducts = products,
-//                    groupedProducts = products.groupBy { it.category },
-//                )
-//            }
-//        }
-//    }
-
     fun loadAllProducts() {
 
         viewModelScope.launch {
@@ -50,7 +36,6 @@ class CatalogViewModel(
                         _catalogUiState.value = CatalogUiState.NoProducts
                     } else {
                         _catalogUiState.value = CatalogUiState.ProductsFound(
-                            allProducts = products.map { it.toDisplay() },
                             groupedProducts = products.map { it.toDisplay() }
                                 .groupBy { it.category },
                         )
@@ -64,7 +49,6 @@ class CatalogViewModel(
         object NoProducts : CatalogUiState()
 
         data class ProductsFound(
-            val allProducts: List<ProductDisplay>,
             val groupedProducts: Map<Category, List<ProductDisplay>>,
         ) : CatalogUiState()
     }

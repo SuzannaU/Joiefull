@@ -119,7 +119,7 @@ fun ProductContent(
         )
         ProductDetails(
             productName = product.name,
-            globalRating = "3,2",
+            globalRating = "3,2",   // For demo purposes. Rating is not provided in demo API
             price = product.price,
             originalPrice = product.originalPrice,
             forCatalogScreen = false,

@@ -27,7 +27,7 @@ fun CommentScreen(
     onDismiss: () -> Unit,
     onConfirmation: (String) -> Unit,
 ) {
-    var textState = rememberTextFieldState()
+    val textState = rememberTextFieldState()
 
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -107,7 +107,6 @@ fun CatalogContent(
             state = categoryListState,
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            flingBehavior = rememberSnapFlingBehavior(lazyListState = categoryListState),
         ) {
             categories.forEach { category ->
 
@@ -186,7 +185,7 @@ fun CategoryRow(
                         )
                         ProductDetails(
                             productName = product.name,
-                            globalRating = "4.3",
+                            globalRating = "4.3",   // For demo purposes. Rating is not provided in demo API
                             price = product.price,
                             originalPrice = product.originalPrice,
                             modifier = Modifier.fillMaxWidth(),
