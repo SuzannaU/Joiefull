@@ -24,27 +24,48 @@ class CatalogViewModel(
         loadAllProducts()
     }
 
+//    fun loadAllProducts() {
+//
+//        viewModelScope.launch {
+//            _catalogUiState.value = CatalogUiState.LoadingState
+//            withContext(dispatcherProvider.io) {
+//                val products = loadProductsUseCase.execute().map { it.toDisplay() }
+//                _catalogUiState.value = CatalogUiState.ProductsFound(
+//                    allProducts = products,
+//                    groupedProducts = products.groupBy { it.category },
+//                )
+//            }
+//        }
+//    }
+
     fun loadAllProducts() {
 
         viewModelScope.launch {
             _catalogUiState.value = CatalogUiState.LoadingState
             withContext(dispatcherProvider.io) {
-                val products = loadProductsUseCase.execute().map { it.toDisplay() }
-                _catalogUiState.value = CatalogUiState.ProductsFound(
-                    allProducts = products,
-                    groupedProducts = products.groupBy { it.category },
-                )
+                loadProductsUseCase.execute()
             }
+                .collect { products ->
+                    if (products.isEmpty()) {
+                        _catalogUiState.value = CatalogUiState.NoProducts
+                    } else {
+                        _catalogUiState.value = CatalogUiState.ProductsFound(
+                            allProducts = products.map { it.toDisplay() },
+                            groupedProducts = products.map { it.toDisplay() }
+                                .groupBy { it.category },
+                        )
+                    }
+                }
         }
     }
 
     sealed class CatalogUiState {
         object LoadingState : CatalogUiState()
+        object NoProducts : CatalogUiState()
 
         data class ProductsFound(
             val allProducts: List<ProductDisplay>,
             val groupedProducts: Map<Category, List<ProductDisplay>>,
         ) : CatalogUiState()
-
     }
 }

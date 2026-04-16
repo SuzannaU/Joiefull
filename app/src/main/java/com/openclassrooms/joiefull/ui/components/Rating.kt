@@ -1,11 +1,12 @@
 package com.openclassrooms.joiefull.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -75,15 +76,16 @@ fun StarRating(
 @Composable
 fun Review(
     reviewText: String,
-    onReviewChanged: (String, String) -> Unit,
+    onReviewChanged: (String) -> Unit,
+    onReviewSubmitted: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
-    var reviewState = rememberTextFieldState(reviewText)
     val reviewConfirmation = stringResource(R.string.review_saved)
 
     OutlinedTextField(
-        state = reviewState,
+        value = reviewText,
+        onValueChange = onReviewChanged,
         placeholder = {
             Text(
                 text = stringResource(R.string.review_placeholder),
@@ -98,10 +100,9 @@ fun Review(
             )
         },
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-        onKeyboardAction = { performDefaultAction ->
-            onReviewChanged(reviewState.text.toString(), reviewConfirmation)
-            performDefaultAction()
-        },
+        keyboardActions = KeyboardActions(
+            onDone = { onReviewSubmitted(reviewText, reviewConfirmation) }
+        ),
         modifier = modifier
     )
 }

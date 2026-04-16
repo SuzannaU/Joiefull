@@ -49,5 +49,5 @@ val appModule = module {
     factory { UpdateReviewUseCase(get()) }
 
     viewModel { CatalogViewModel(get(), get()) }
-    viewModel { ProductViewModel(get(), get(), get(), get(), get()) }
+    viewModel { ProductViewModel(get(), get(), get(), get(), get(), get()) }
 }

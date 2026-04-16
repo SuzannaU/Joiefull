@@ -11,10 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,20 +34,18 @@ fun ProductScreen(
     userPicture: String,
     onBackClicked: () -> Unit,
     onShareClicked: (String, String) -> Unit,
-    //shareProduct: (String, String) -> Unit,
     showReviewToast: (String) -> Unit,
     viewModel: ProductViewModel = koinViewModel(),
 ) {
 
+    val focusManager = LocalFocusManager.current
     // ProductScreen is called in the DetailPane => remains in the composition even with a different product
     LaunchedEffect(productId) {         // this forces a "load" if the productId changes
         viewModel.loadProductById(productId)
+        focusManager.clearFocus(force = true)
     }
 
     val uiState = viewModel.productUiState.collectAsStateWithLifecycle()
-
-    val scrollState = rememberScrollState()
-    val showShareDialog = rememberSaveable { mutableStateOf(false) }
 
     when (uiState.value) {
         ProductViewModel.ProductUiState.LoadingState -> {
@@ -74,39 +71,22 @@ fun ProductScreen(
                 userRating = product.rating,
                 reviewText = product.review,
                 onBackClicked = onBackClicked,
-//                    onShareClicked = { showShareDialog.value = true },
                 onShareClicked = { onShareClicked(product.name, product.pictureUrl) },
                 onLikeClicked = { viewModel.toggleLikeState() },
                 onRatingChanged = { viewModel.onRatingChanged(it) },
-                onReviewChanged = { reviewText, reviewConfirmation ->
+                onReviewChanged = { reviewText ->
                     viewModel.onReviewChanged(reviewText)
+                },
+                onReviewSubmitted = { reviewText, reviewConfirmation ->
+                    viewModel.onReviewSubmitted(reviewText)
                     showReviewToast(reviewConfirmation)
                 },
                 modifier = Modifier
-                    .padding(horizontal = 12.dp)
-                    .verticalScroll(state = scrollState),
+                    .padding(horizontal = 12.dp),
             )
-
-//                if (showShareDialog.value) {
-//                    ShareDialog(
-//                        onDismissRequest = { showShareDialog.value = false },
-//                        onConfirmation = { comment ->
-//                            showShareDialog.value = false
-//                            val textToShare = buildString {
-//                                if (comment.isNotBlank()) {
-//                                    append(comment)
-//                                    append("\n\n")
-//                                }
-//                                append(product.pictureUrl)
-//                            }
-//                            shareProduct(product.name, textToShare)
-//                        },
-//                    )
-//                }
         }
     }
 }
-
 
 @Composable
 fun ProductContent(
@@ -118,13 +98,14 @@ fun ProductContent(
     onBackClicked: () -> Unit,
     onShareClicked: () -> Unit,
     onLikeClicked: () -> Unit,
-    onReviewChanged: (String, String) -> Unit,
+    onReviewChanged: (String) -> Unit,
+    onReviewSubmitted: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().verticalScroll(state = rememberScrollState()),
     ) {
 
         PictureBoxProduct(
@@ -155,6 +136,7 @@ fun ProductContent(
         Review(
             reviewText = reviewText,
             onReviewChanged = onReviewChanged,
+            onReviewSubmitted = onReviewSubmitted,
             modifier = Modifier.fillMaxWidth()
         )
     }

@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.openclassrooms.joiefull.R
 import com.openclassrooms.joiefull.domain.model.Category
 import com.openclassrooms.joiefull.ui.components.LoadingBar
+import com.openclassrooms.joiefull.ui.components.NoProductFound
 import com.openclassrooms.joiefull.ui.components.PictureBoxCatalog
 import com.openclassrooms.joiefull.ui.components.ProductDetails
 import com.openclassrooms.joiefull.ui.model.ProductDisplay
@@ -53,22 +54,27 @@ fun CatalogScreen(
 
     val uiState = viewModel.catalogUiState.collectAsStateWithLifecycle()
 
-        when (uiState.value) {
-            CatalogViewModel.CatalogUiState.LoadingState -> {
-                LoadingBar(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                )
-            }
-
-            is CatalogViewModel.CatalogUiState.ProductsFound -> {
-                CatalogContent(
-                    groupedProducts =
-                        (uiState.value as CatalogViewModel.CatalogUiState.ProductsFound).groupedProducts,
-                    onProductClicked = onProductClicked,
-                )
-            }
+    when (uiState.value) {
+        CatalogViewModel.CatalogUiState.LoadingState -> {
+            LoadingBar(
+                modifier = Modifier.fillMaxSize(),
+            )
         }
+
+        is CatalogViewModel.CatalogUiState.ProductsFound -> {
+            CatalogContent(
+                groupedProducts =
+                    (uiState.value as CatalogViewModel.CatalogUiState.ProductsFound).groupedProducts,
+                onProductClicked = onProductClicked,
+            )
+        }
+
+        CatalogViewModel.CatalogUiState.NoProducts -> {
+            NoProductFound(
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    }
 }
 
 @Composable
@@ -158,7 +164,9 @@ fun CategoryRow(
                 state = listState,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState),
-                modifier = Modifier.height(300.dp).fillMaxWidth()
+                modifier = Modifier
+                    .height(300.dp)
+                    .fillMaxWidth()
             ) {
                 items(products) { product ->
                     Column(

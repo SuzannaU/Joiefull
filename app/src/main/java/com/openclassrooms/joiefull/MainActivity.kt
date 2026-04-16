@@ -2,7 +2,6 @@ package com.openclassrooms.joiefull
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -115,7 +114,6 @@ fun MainScreen(
             AnimatedPane {
 
                 val selectedId = productIdState.longValue
-                Log.d("TAG", "selected is $selectedId")
 
                 if (selectedId == -1L) {
                     NoProductSelected(

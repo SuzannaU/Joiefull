@@ -1,6 +1,6 @@
 package com.openclassrooms.joiefull.ui.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.openclassrooms.joiefull.domain.usecase.LoadProductByIdUseCase
@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProductViewModel(
+    private val savedState: SavedStateHandle,
     private val dispatcherProvider: DispatcherProvider,
     private val loadProductByIdUseCase: LoadProductByIdUseCase,
     private val updateIsLikedUseCase: UpdateIsLikedUseCase,
@@ -32,8 +33,13 @@ class ProductViewModel(
             _productUiState.value = ProductUiState.LoadingState
             withContext(dispatcherProvider.io) {
                 try {
+                    val product = withContext(dispatcherProvider.io) {
+                        loadProductByIdUseCase.execute(id)
+                    }
+                    val reviewState =
+                        savedState.get<String>("reviewState_product$id") ?: product.review
                     _productUiState.value = ProductUiState.ProductFound(
-                        loadProductByIdUseCase.execute(id).toDisplay()
+                        product.toDisplay().copy(review = reviewState)
                     )
                 } catch (e: NoSuchElementException) {
                     _productUiState.value = ProductUiState.NoProduct
@@ -51,14 +57,13 @@ class ProductViewModel(
         viewModelScope.launch {
             _productUiState.value = ProductUiState.LoadingState
 
-            withContext(dispatcherProvider.io) {
-                try {
-                    val updatedProduct =
-                        updateIsLikedUseCase.execute(currentState.product.id, newLikeState)
-                    _productUiState.value = currentState.copy(product = updatedProduct.toDisplay())
-                } catch (e: NoSuchElementException) {
-                    _productUiState.value = ProductUiState.NoProduct
+            try {
+                val updatedProduct = withContext(dispatcherProvider.io) {
+                    updateIsLikedUseCase.execute(currentState.product.id, newLikeState)
                 }
+                _productUiState.value = currentState.copy(product = updatedProduct.toDisplay())
+            } catch (e: NoSuchElementException) {
+                _productUiState.value = ProductUiState.NoProduct
             }
         }
     }
@@ -67,20 +72,33 @@ class ProductViewModel(
         val currentState = _productUiState.value
         if (currentState !is ProductUiState.ProductFound) return
 
+        savedState["reviewState_product${currentState.product.id}"] = newReview
+
+        _productUiState.value = currentState.copy(
+            product = currentState.product.copy(
+                review = newReview
+            )
+        )
+    }
+
+    fun onReviewSubmitted(reviewText: String) {
+        val currentState = _productUiState.value
+        if (currentState !is ProductUiState.ProductFound) return
+
         viewModelScope.launch {
             _productUiState.value = ProductUiState.LoadingState
-
-            withContext(dispatcherProvider.io) {
-                try {
-                    val updatedProduct =
-                        updateReviewUseCase.execute(currentState.product.id, newReview)
-                    _productUiState.value = currentState.copy(product = updatedProduct.toDisplay())
-                } catch (e: NoSuchElementException) {
-                    _productUiState.value = ProductUiState.NoProduct
+            try {
+                val updatedProduct = withContext(dispatcherProvider.io) {
+                    updateReviewUseCase.execute(currentState.product.id, reviewText)
                 }
+                _productUiState.value = currentState.copy(product = updatedProduct.toDisplay())
+
+            } catch (e: NoSuchElementException) {
+                _productUiState.value = ProductUiState.NoProduct
             }
         }
     }
+
 
     fun onRatingChanged(newRating: Int) {
         val currentState = _productUiState.value
@@ -88,15 +106,14 @@ class ProductViewModel(
 
         viewModelScope.launch {
             _productUiState.value = ProductUiState.LoadingState
-
-            withContext(dispatcherProvider.io) {
-                try {
-                    val updatedProduct =
-                        updateRatingUseCase.execute(currentState.product.id, newRating)
-                    _productUiState.value = currentState.copy(product = updatedProduct.toDisplay())
-                } catch (e: NoSuchElementException) {
-                    _productUiState.value = ProductUiState.NoProduct
+            try {
+                val updatedProduct = withContext(dispatcherProvider.io) {
+                    updateRatingUseCase.execute(currentState.product.id, newRating)
                 }
+                _productUiState.value = currentState.copy(product = updatedProduct.toDisplay())
+
+            } catch (e: NoSuchElementException) {
+                _productUiState.value = ProductUiState.NoProduct
             }
         }
     }
