@@ -17,6 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -54,16 +57,29 @@ fun StarRating(
     onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier) {
+    val ratingStateText = stringResource(R.string.current_rating_is, rating)
+    Row(
+        modifier = modifier,
+    ) {
         repeat(5) { index ->
             val isFilled = rating > index
+            val ratingText = stringResource(R.string.set_rating, index + 1)
 
             IconButton(
-                onClick = { onRatingChanged(index + 1) }
+                onClick = { onRatingChanged(index + 1) },
+                modifier = Modifier.semantics {
+                    stateDescription = ratingStateText
+                    onClick(label = ratingText) {
+                        onRatingChanged(index + 1)
+                        true
+                    }
+                }
             ) {
                 Icon(
-                    painter = painterResource(if (isFilled) R.drawable.star_filled else R.drawable.star_outlined),
-                    contentDescription = "Rating is ${index + 1}",
+                    painter = painterResource(
+                        if (isFilled) R.drawable.star_filled else R.drawable.star_outlined
+                    ),
+                    contentDescription = null,
                     tint = MaterialTheme.colorScheme.primaryContainer,
                     modifier = Modifier.size(25.dp)
                 )

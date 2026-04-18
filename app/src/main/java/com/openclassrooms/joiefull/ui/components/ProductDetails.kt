@@ -14,6 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +40,7 @@ fun ProductDetails(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = if (forCatalogScreen) 8.dp else 0.dp, vertical = 8.dp)
+            .semantics(mergeDescendants = !forCatalogScreen) {}
     ) {
 
         Row(
@@ -60,16 +66,26 @@ fun ProductDetails(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
+
             Text(
                 text = price,
                 style = if (forCatalogScreen) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .semantics{
+                        contentDescription = price
+                    },
             )
 
+            val cdOriginalPrice = stringResource(R.string.cd_original_price, originalPrice)
             Text(
                 text = originalPrice,
                 textDecoration = TextDecoration.LineThrough,
                 color = Color.Gray,
                 style = if (forCatalogScreen) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .semantics{
+                        contentDescription = cdOriginalPrice
+                    },
             )
         }
     }
@@ -81,6 +97,8 @@ fun GlobalRating(
     forCatalogScreen: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val textGlobalRating = stringResource(R.string.rating_is, globalRating)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -97,6 +115,9 @@ fun GlobalRating(
         Text(
             text = globalRating,
             style = if (forCatalogScreen) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.semantics {
+                text = AnnotatedString(textGlobalRating)
+            }
         )
     }
 }

@@ -2,7 +2,6 @@ package com.openclassrooms.joiefull.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,11 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +56,8 @@ fun PictureBoxCatalog(
                 .size(200.dp)
                 .clip(RoundedCornerShape(20.dp))
         )
+
+        val textLikes = stringResource(R.string.likes_count, likes)
         Likes(
             likes = likes,
             isLiked = isLiked,
@@ -63,6 +67,9 @@ fun PictureBoxCatalog(
                 .clip(RoundedCornerShape(20.dp))
                 .background(color = Color.White)
                 .align(Alignment.BottomEnd)
+                .semantics {
+                    stateDescription = textLikes
+                }
         )
     }
 }
@@ -122,6 +129,9 @@ fun PictureBoxProduct(
             )
         }
 
+        val textLikes = stringResource(R.string.likes_count, likes)
+        val actionLike = stringResource(R.string.like)
+        val actionUnlike = stringResource(R.string.unlike)
         Likes(
             likes = likes,
             isLiked = isLiked,
@@ -132,6 +142,13 @@ fun PictureBoxProduct(
                 .background(color = Color.White)
                 .align(Alignment.BottomEnd)
                 .clickable(onClick = onLikeClicked)
+                .semantics {
+                    stateDescription = textLikes
+                    onClick(label = if (isLiked) actionUnlike else actionLike) {
+                        onLikeClicked()
+                        true
+                    }
+                }
         )
     }
 }
@@ -149,15 +166,17 @@ fun Likes(
     ) {
 
         Icon(
-            painterResource(if (isLiked) R.drawable.favorite_filled else R.drawable.outline_favorite_24),
-            contentDescription = stringResource(R.string.likes_count),
-            modifier = Modifier.size(15.dp)
+            painter = painterResource(if (isLiked) R.drawable.favorite_filled else R.drawable.outline_favorite_24),
+            contentDescription = if (isLiked) stringResource(R.string.product_is_liked)
+            else stringResource(R.string.product_not_liked),
+            modifier = Modifier.size(15.dp),
         )
 
         Text(
             text = likes,
             fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.clearAndSetSemantics { }
         )
     }
 }

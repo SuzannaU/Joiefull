@@ -9,7 +9,7 @@
     <string name="product_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
     <string name="share">Partager</string>
     <string name="back_to_catalog">Naviguer vers le catalogue</string>
-    <string name="likes_count">Nombre de likes</string>
+    <string name="likes_count">%1$s likes</string>
     <string name="review_label">Partagez ici vos impressions sur cette pièce</string>
     <string name="review_placeholder">Commentaire</string>
     <string name="share_this_item">Partagez cet article: %1$s</string>
@@ -19,5 +19,13 @@
     <string name="review_saved">Commentaire enregistré</string>
     <string name="select_product">Sélectionnez un produit</string>
     <string name="no_product">Aucun produit trouvé</string>
+    <string name="rating_is">Noté %1$s sur 5</string>
+    <string name="current_rating_is">Note actuelle : %1$s sur 5</string>
+    <string name="cd_original_price">Prix d\'origine %1$s</string>
+    <string name="product_is_liked">Dans les likes</string>
+    <string name="product_not_liked">Pas dans les likes</string>
+    <string name="like">Ajouter aux likes</string>
+    <string name="unlike">Retirer des likes</string>
+    <string name="set_rating">Définir la note à %1$d</string>
 
 </resources>
