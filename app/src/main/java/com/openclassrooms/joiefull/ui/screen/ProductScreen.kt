@@ -1,5 +1,6 @@
 package com.openclassrooms.joiefull.ui.screen
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,11 +38,9 @@ fun ProductScreen(
     viewModel: ProductViewModel = koinViewModel(),
 ) {
 
-    val focusManager = LocalFocusManager.current
     // ProductScreen is called in the DetailPane => remains in the composition even with a different product
     LaunchedEffect(productId) {         // this forces a "load" if the productId changes
         viewModel.loadProductById(productId)
-        focusManager.clearFocus(force = true)
     }
 
     val uiState = viewModel.productUiState.collectAsStateWithLifecycle()
@@ -68,8 +66,6 @@ fun ProductScreen(
             ProductContent(
                 product = product,
                 userPicture = userPicture,
-                userRating = product.rating,
-                reviewText = product.review,
                 onBackClicked = onBackClicked,
                 onShareClicked = { onShareClicked(product.name, product.pictureUrl) },
                 onLikeClicked = { viewModel.toggleLikeState() },
@@ -92,8 +88,6 @@ fun ProductScreen(
 fun ProductContent(
     product: ProductDisplay,
     userPicture: String,
-    userRating: Int,
-    reviewText: String,
     onRatingChanged: (Int) -> Unit,
     onBackClicked: () -> Unit,
     onShareClicked: () -> Unit,
@@ -116,6 +110,7 @@ fun ProductContent(
             onShareClicked = onShareClicked,
             onLikeClicked = onLikeClicked,
             isLiked = product.isLiked,
+            modifier = Modifier.focusable(),
         )
         ProductDetails(
             productName = product.name,
@@ -130,11 +125,11 @@ fun ProductContent(
         )
         UserRating(
             userPicture = userPicture,
-            userRating = userRating,
+            userRating = product.rating,
             onRatingChanged = onRatingChanged
         )
         Review(
-            reviewText = reviewText,
+            reviewText = product.review,
             onReviewChanged = onReviewChanged,
             onReviewSubmitted = onReviewSubmitted,
             modifier = Modifier.fillMaxWidth()
