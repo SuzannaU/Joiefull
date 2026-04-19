@@ -27,5 +27,7 @@
     <string name="like">Ajouter aux likes</string>
     <string name="unlike">Retirer des likes</string>
     <string name="set_rating">Définir la note à %1$d</string>
+    <string name="next_category">Passer à la catégorie suivante</string>
+    <string name="prev_category">Revenir à la catégorie précédente</string>
 
 </resources>

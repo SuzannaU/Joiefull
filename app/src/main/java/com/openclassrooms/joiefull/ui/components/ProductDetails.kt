@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -80,7 +79,7 @@ fun ProductDetails(
             Text(
                 text = originalPrice,
                 textDecoration = TextDecoration.LineThrough,
-                color = Color.Gray,
+                color = MaterialTheme.colorScheme.secondary,
                 style = if (forCatalogScreen) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .semantics{

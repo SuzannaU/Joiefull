@@ -1,6 +1,5 @@
 package com.openclassrooms.joiefull.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -25,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -131,18 +131,8 @@ fun CategoriesColumn(
     onProductClicked: (Long) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val rowStates = categories.associate { category ->
-        category.name to rememberSaveable(
-            category.name,
-            saver = LazyListState.Saver
-        ) {
-            LazyListState()
-        }
-    }
 
-    val focusRequesters = categories.associate { category ->
-        category.name to remember { FocusRequester() }
-    }
+    val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
 
     LazyColumn(
         state = categoryListState,
@@ -152,13 +142,22 @@ fun CategoriesColumn(
         categories.forEachIndexed { index, category ->
 
             val catProducts = groupedProducts[category] ?: emptyList()
-            val focusRequester = focusRequesters[category.name] ?: FocusRequester()
 
             item(key = category.name) {
+                val rowState = rememberSaveable(
+                    saver = LazyListState.Saver
+                ) {
+                    LazyListState()
+                }
+                val focusRequester = remember { FocusRequester() }
+                LaunchedEffect(focusRequester) {
+                    focusRequesters[category.name] = focusRequester
+                }
+
                 CategoryRow(
                     category = category,
                     products = catProducts,
-                    listState = rowStates[category.name] ?: rememberLazyListState(),
+                    listState = rowState,
                     index = index,
                     lastIndex = categories.lastIndex,
                     focusRequester = focusRequester,
@@ -206,37 +205,13 @@ fun CategoryRow(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            text = stringResource(category.labelId),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .focusRequester(focusRequester)
-                .focusable()
-                .semantics {
-                heading()
-                val actions = mutableListOf<CustomAccessibilityAction>()
-
-                if (index < lastIndex) {
-                    actions += CustomAccessibilityAction(
-                        label = "Passer à la catégorie suivante",
-                        action = {
-                            nextCat()
-                            true
-                        }
-                    )
-                }
-
-                if (index > 0) {
-                    actions += CustomAccessibilityAction(
-                        label = "Revenir à la catégorie précédente",
-                        action = {
-                            prevCat()
-                            true
-                        }
-                    )
-                }
-                customActions = actions
-            }
+        CategoryTitle(
+            category = category,
+            focusRequester = focusRequester,
+            index = index,
+            lastIndex = lastIndex,
+            nextCat = nextCat,
+            prevCat = prevCat,
         )
 
         Box(
@@ -252,31 +227,10 @@ fun CategoryRow(
                     .fillMaxWidth()
             ) {
                 items(products) { product ->
-                    Column(
-                        horizontalAlignment = Alignment.Start,
-                        modifier = Modifier
-                            .width(200.dp)
-                            .clickable {
-                                onProductClicked(product.id)
-                            }
-                            .semantics(mergeDescendants = true) {}
-
-                    ) {
-                        PictureBoxCatalog(
-                            pictureUrl = product.pictureUrl,
-                            pictureDescription = product.pictureDescription,
-                            likes = product.likes.toString(),
-                            isLiked = product.isLiked,
-                        )
-                        ProductDetails(
-                            productName = product.name,
-                            globalRating = "4.3",   // For demo purposes. Rating is not provided in demo API
-                            price = product.price,
-                            originalPrice = product.originalPrice,
-                            modifier = Modifier.fillMaxWidth(),
-                            forCatalogScreen = true,
-                        )
-                    }
+                    ProductColumn(
+                        product = product,
+                        onProductClicked = onProductClicked,
+                    )
                 }
             }
 
@@ -293,6 +247,82 @@ fun CategoryRow(
             }
         }
     }
+}
+
+@Composable
+fun ProductColumn(
+    product: ProductDisplay,
+    onProductClicked: (Long) -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .width(200.dp)
+            .clickable {
+                onProductClicked(product.id)
+            }
+            .semantics(mergeDescendants = true) {}
+    ) {
+        PictureBoxCatalog(
+            pictureUrl = product.pictureUrl,
+            pictureDescription = product.pictureDescription,
+            likes = product.likes.toString(),
+            isLiked = product.isLiked,
+        )
+        ProductDetails(
+            productName = product.name,
+            globalRating = "4.3",   // For demo purposes. Rating is not provided in demo API
+            price = product.price,
+            originalPrice = product.originalPrice,
+            modifier = Modifier.fillMaxWidth(),
+            forCatalogScreen = true,
+        )
+    }
+}
+
+@Composable
+fun CategoryTitle(
+    category: Category,
+    focusRequester: FocusRequester,
+    index: Int,
+    lastIndex: Int,
+    nextCat: () -> Unit,
+    prevCat: () -> Unit,
+) {
+    val nextCat = stringResource(R.string.next_category)
+    val prevCat = stringResource(R.string.prev_category)
+    Text(
+        text = stringResource(category.labelId),
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .focusable()
+            .semantics {
+                heading()
+                val actions = mutableListOf<CustomAccessibilityAction>()
+
+                if (index < lastIndex) {
+                    actions += CustomAccessibilityAction(
+                        label = nextCat,
+                        action = {
+                            nextCat()
+                            true
+                        }
+                    )
+                }
+
+                if (index > 0) {
+                    actions += CustomAccessibilityAction(
+                        label = prevCat,
+                        action = {
+                            prevCat()
+                            true
+                        }
+                    )
+                }
+                customActions = actions
+            }
+    )
 }
 
 @Composable

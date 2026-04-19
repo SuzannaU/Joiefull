@@ -1,3 +1,5 @@
+@file:Suppress("UnusedFlow", "UnusedFlow")
+
 package com.openclassrooms.joiefull.ui
 
 import com.openclassrooms.joiefull.TestDispatcherProvider
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@Suppress("UnusedFlow", "UnusedFlow")
 @OptIn(ExperimentalCoroutinesApi::class)
 class CatalogViewModelTest {
 
