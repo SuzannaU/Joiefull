@@ -223,7 +223,7 @@ fun CategoryRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = listState),
                 modifier = Modifier
-                    .height(300.dp)
+                    .height(280.dp)
                     .fillMaxWidth()
             ) {
                 items(products) { product ->
